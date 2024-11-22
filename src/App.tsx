@@ -7,6 +7,7 @@ import NewFine from './pages/NewFine';
 import EditFine from './pages/EditFine';
 import Settings from './pages/Settings';
 import Notifications from './pages/Notifications';
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/new" element={<NewFine />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/change-password" element={<ChangePassword />} />
         </Routes>
       </Router>
     </ThemeProvider>

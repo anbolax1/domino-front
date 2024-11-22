@@ -55,7 +55,7 @@ export default function ChangePassword() {
                             id="old-password"
                             value={oldPassword}
                             onChange={(e) => setOldPassword(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                            className="w-full px-4 py-2 border rounded-md dark:bg-gray-800 text-white focus:outline-none focus:ring focus:ring-blue-300"
                             required
                         />
                     </div>
@@ -68,7 +68,7 @@ export default function ChangePassword() {
                             id="new-password"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                            className="w-full px-4 py-2 border rounded-md dark:bg-gray-800 text-white focus:outline-none focus:ring focus:ring-blue-300"
                             required
                         />
                     </div>
@@ -81,7 +81,7 @@ export default function ChangePassword() {
                             id="confirm-password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                            className="w-full px-4 py-2 border rounded-md dark:bg-gray-800 text-white focus:outline-none focus:ring focus:ring-blue-300"
                             required
                         />
                     </div>

@@ -1,21 +1,56 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Lock } from 'lucide-react';
+import { useAuth } from '../context/AuthProvider';
+import { useNavigate } from "react-router-dom";
+import LoginPage from "../pages/LoginPage";
 
 const Header = ({ isAuthenticated, user }) => {
+    const { logout: logoutUser } = useAuth();
+    const navigate = useNavigate();
+
+    const hasLastName = user && user.lastname && user.lastname.trim() !== '';
+    const hasFirstName = user && user.firstname && user.firstname.trim() !== '';
+
+    let fio;
+    if (hasLastName && hasFirstName) {
+        fio = `${user.firstname} ${user.lastname}`;
+    } else if (user && user.id && user.id === 5) {
+        fio = 'admin';
+    } else {
+        fio = ''; // Можно задать значение по умолчанию, если нужно
+    }
+
+    const handleLogout = async (e) => {
+        e.preventDefault();
+        await logoutUser();
+        navigate('/settings');
+    }
+
+    const handleLogin = () => {
+        navigate('/login'); // Замените '/login' на путь к вашей странице авторизации
+    }
+
     return (
         <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow-md">
             <div>
-                <div className="text-gray-900 dark:text-white font-bold">{user.role}</div>
-                <div className="text-gray-600 dark:text-gray-300 text-sm">{user.name}</div>
+                <div className="text-gray-900 dark:text-white font-bold">{user?.role}</div>
+                <div className="text-gray-600 dark:text-gray-300 text-sm">{fio}</div>
             </div>
-            <button className="flex items-center text-gray-600 dark:text-gray-300">
+            <button
+                className="flex items-center text-gray-600 dark:text-gray-300"
+                // onClick={isAuthenticated ? handleLogout : handleLogin}
+                onClick={isAuthenticated ? handleLogout : handleLogin}
+            >
                 {isAuthenticated ? (
                     <>
                         <Lock className="w-5 h-5 mr-2" />
                         Logout
                     </>
                 ) : (
-                    'Login'
+                    <>
+                        <Lock className="w-5 h-5 mr-2" />
+                        Login
+                    </>
                 )}
             </button>
         </div>

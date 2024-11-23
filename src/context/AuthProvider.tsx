@@ -1,25 +1,45 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import {useNavigate} from "react-router-dom";
 
 interface AuthContextType {
     isAuthenticated: boolean;
+    login: (userData: any) => void;
+    logout: () => void;
+    user: any;
 }
-// Создаем контекст
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Провайдер для контекста
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState({ name: 'Иванов Иван', role: 'Бригадир' });
+    const [isAuthenticated, setIsAuthenticated] = React.useState(() => {
+        return localStorage.getItem('is_loginned') === 'true';
+    });
+    // const [user, setUser] = useState({ name: 'Иванов Иван', role: 'Бригадир' });
+    const [user, setUser] = useState({ name: '', role: '' });
 
-    const login = (userData) => {
+    const login = (userData, token) => {
         setIsAuthenticated(true);
         setUser(userData);
+        localStorage.setItem('is_loginned', 'true');
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
     };
 
     const logout = () => {
         setIsAuthenticated(false);
         setUser(null);
+        localStorage.setItem('is_loginned', 'false');
+        localStorage.setItem('token', '');
+        localStorage.setItem('user', '{}');
     };
+
+    useEffect(() => {
+        const isLoginned = localStorage.getItem('is_loginned') === 'true';
+        if (isLoginned) {
+            const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+            setIsAuthenticated(true);
+            setUser(storedUser);
+        }
+    }, []);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
@@ -28,7 +48,6 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-// Хук для использования контекста
 export const useAuth = () => {
     return useContext(AuthContext);
 };

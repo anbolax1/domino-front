@@ -1,5 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
+import {useRole} from "./RoleContext";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -16,6 +17,8 @@ export const AuthProvider = ({ children }) => {
     // const [user, setUser] = useState({ name: 'Иванов Иван', role: 'Бригадир' });
     const [user, setUser] = useState({ name: '', role: '' });
 
+    const { setRole } = useRole();
+
     const login = (userData, token) => {
         setIsAuthenticated(true);
         setUser(userData);
@@ -30,6 +33,8 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('is_loginned', 'false');
         localStorage.setItem('token', '');
         localStorage.setItem('user', '{}');
+        localStorage.setItem('userRole', '');
+        setRole('');
     };
 
     useEffect(() => {

@@ -1,12 +1,24 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthProvider';
 import { useNavigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
+import {useRole} from "../context/RoleContext";
 
 const Header = ({ isAuthenticated, user }) => {
     const { logout: logoutUser } = useAuth();
     const navigate = useNavigate();
+
+    const { role } = useRole();
+
+    /*const [role, setRole] = useState('');
+    useEffect(() => {
+        // Получаем роль из localStorage при монтировании компонента
+        const savedRole = localStorage.getItem('userRole');
+        if (savedRole) {
+            setRole(savedRole);
+        }
+    }, []);*/
 
     const hasLastName = user && user.lastname && user.lastname.trim() !== '';
     const hasFirstName = user && user.firstname && user.firstname.trim() !== '';
@@ -23,7 +35,7 @@ const Header = ({ isAuthenticated, user }) => {
     const handleLogout = async (e) => {
         e.preventDefault();
         await logoutUser();
-        navigate('/settings');
+        navigate(-1);
     }
 
     const handleLogin = () => {
@@ -33,7 +45,7 @@ const Header = ({ isAuthenticated, user }) => {
     return (
         <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow-md">
             <div>
-                <div className="text-gray-900 dark:text-white font-bold">{user?.role}</div>
+                <div className="text-gray-900 dark:text-white font-bold">{role || ''}</div>
                 <div className="text-gray-600 dark:text-gray-300 text-sm">{fio}</div>
             </div>
             <button

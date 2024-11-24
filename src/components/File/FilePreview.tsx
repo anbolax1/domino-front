@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, FileText, Image as ImageIcon } from 'lucide-react';
+import {FileText, X} from 'lucide-react';
 
 interface FilePreviewProps {
     file: File;
@@ -20,7 +20,7 @@ export default function FilePreview({ file, comment, onDelete, onCommentChange, 
     }, [preview]);
 
     return (
-        <div className="relative group">
+        <div className="relative group overflow-visible">
             <div
                 onClick={onClick}
                 className="w-full h-32 rounded-lg overflow-hidden cursor-pointer border border-gray-200 dark:border-gray-700"
@@ -40,7 +40,7 @@ export default function FilePreview({ file, comment, onDelete, onCommentChange, 
 
             <button
                 onClick={onDelete}
-                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-10"
             >
                 <X className="w-4 h-4" />
             </button>

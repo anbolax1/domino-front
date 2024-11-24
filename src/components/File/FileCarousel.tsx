@@ -29,7 +29,7 @@ export default function FileCarousel({
             className="w-full"
         >
             {files.map(({file, comment, tempId}) => (
-                <SwiperSlide key={tempId}>
+                <SwiperSlide key={tempId} className="pt-2">
                     <FilePreview
                         file={file}
                         comment={comment}

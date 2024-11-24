@@ -93,7 +93,7 @@ export function FileInput({
                             htmlFor={inputId}
                             className="relative cursor-pointer rounded-md font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
                         >
-                            <span>Upload files</span>
+                            <span>Загрузите файлы</span>
                             <input
                                 id={inputId}
                                 name={inputId}
@@ -103,11 +103,11 @@ export function FileInput({
                                 onChange={onFileChange}
                             />
                         </label>
-                        <p className="pl-1">or drag and drop</p>
+                        <p className="pl-1">или перетащите в это окно</p>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                        PNG, JPG, GIF up to 10MB
-                    </p>
+                   {/* <p className="text-xs text-gray-500 dark:text-gray-400">
+                        PNG, JPG, GIF, MP4, XLS, XLSX up to 10MB
+                    </p>*/}
                 </div>
             </div>
         </div>

@@ -49,7 +49,7 @@ export default function FileModal({ file, comment, onClose, onCommentChange, onD
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Comment
+                                Комментарий
                             </label>
                             <textarea
                                 value={comment}
@@ -64,13 +64,13 @@ export default function FileModal({ file, comment, onClose, onCommentChange, onD
                                 onClick={onDelete}
                                 className="px-4 py-2 text-red-600 hover:text-red-700 font-medium"
                             >
-                                Delete
+                                Удалить
                             </button>
                             <button
                                 onClick={onClose}
                                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                             >
-                                Save
+                                Сохранить
                             </button>
                         </div>
                     </div>

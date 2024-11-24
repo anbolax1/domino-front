@@ -49,7 +49,7 @@ export default function FilePreview({ file, comment, onDelete, onCommentChange, 
                 type="text"
                 value={comment}
                 onChange={(e) => onCommentChange(e.target.value)}
-                placeholder="Add a comment..."
+                placeholder="Комментарий"
                 className="mt-2 w-full text-sm px-2 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
         </div>

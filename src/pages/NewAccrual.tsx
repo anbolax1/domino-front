@@ -242,7 +242,7 @@ export default function NewFine() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <DateInput
-                label="Fine Date"
+                label="Дата штрафа"
                 value={formData.date}
                 onChange={(date) => setFormData(prev => ({ ...prev, date }))}
                 required
@@ -284,7 +284,7 @@ export default function NewFine() {
                 className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Add Another Executor
+              Добавить исполнителя
             </button>
 
             <button
@@ -294,7 +294,7 @@ export default function NewFine() {
                     isLoading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
             >
-              {isLoading ? 'Creating...' : 'Create Fine'}
+              {isLoading ? 'Создание...' : 'Создать штраф'}
             </button>
           </form>
 

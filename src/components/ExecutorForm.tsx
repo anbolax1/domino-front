@@ -42,6 +42,18 @@ export default function ExecutorForm({
      onDelete,
      onFileClick
  }: ExecutorFormProps) {
+
+    const handleFilesDrop = (files: File[]) => {
+        // Создаем "фейковое" событие для совместимости с onFileChange
+        const fakeEvent = {
+            target: {
+                files: files,
+            },
+        } as unknown as React.ChangeEvent<HTMLInputElement>;
+
+        // Вызываем обработчик изменения файла
+        onFileChange(executor.id, fakeEvent);
+    };
     return (
         <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4">
             <div className="flex justify-between items-center">
@@ -83,22 +95,22 @@ export default function ExecutorForm({
                 placeholder="Выберите причину"
             />
 
+            {customReason !== undefined && (
+                <TextInput
+                    label="Другая причина"
+                    value={customReason}
+                    onChange={(value) => onCustomReasonChange(executor.id, value)}
+                    required
+                    placeholder="Введите причину"
+                />
+            )}
+
             <TextInput
                 label="Описание причины"
                 value={executor.location}
                 onChange={(value) => onExecutorChange(executor.id, 'comment', value)}
                 required
             />
-
-            {customReason !== undefined && (
-                <TextInput
-                    label="Custom Reason"
-                    value={customReason}
-                    onChange={(value) => onCustomReasonChange(executor.id, value)}
-                    required
-                    placeholder="Enter custom reason"
-                />
-            )}
 
             <FileInput
                 label="Файлы"
@@ -108,6 +120,7 @@ export default function ExecutorForm({
                 onCommentChange={(tempId, comment) => onCommentChange(executor.id, tempId, comment)}
                 onFileClick={onFileClick}
                 inputId={`file-upload-${executor.id}`}
+                onFilesDrop={handleFilesDrop}
             />
         </div>
     );

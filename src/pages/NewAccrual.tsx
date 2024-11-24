@@ -122,7 +122,7 @@ export default function NewFine() {
   };
 
   const handleReasonSelect = (executorId: string, reason: string) => {
-    if (reason === 'Other') {
+    if (reason == '0') {
       setCustomReasons(prev => ({ ...prev, [executorId]: '' }));
       handleExecutorChange(executorId, 'reason', '');
     } else {

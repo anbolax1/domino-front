@@ -9,7 +9,7 @@ export default function FineDetails() {
   const navigate = useNavigate();
   const fine = mockFines.find(f => f.id === id);
 
-  if (!fine) return <div>Fine not found</div>;
+  if (!fine) return <div className="text-gray-600 dark:text-gray-300 text-sm">Fine not found</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

@@ -1,7 +1,6 @@
 import React from 'react';
 import { ArrowLeft, Circle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Navigation from '../components/Navigation';
 import { mockNotifications } from '../data/mockData';
 
 export default function Notifications() {
@@ -62,7 +61,6 @@ export default function Notifications() {
           ))}
         </div>
       </div>
-      <Navigation />
     </div>
   );
 }

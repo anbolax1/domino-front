@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {ArrowLeft, Moon, Sun, Bell, Lock, ChevronRight, ChevronDown, PersonStanding } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Navigation from '../components/Navigation';
 import { useTheme } from '../context/ThemeContext';
 import {useAuth} from "../context/AuthProvider";
 import { useRole } from '../context/RoleContext';
@@ -131,7 +130,6 @@ export default function Settings() {
           </div>
         </div>
       </div>
-      <Navigation />
     </div>
   );
 }

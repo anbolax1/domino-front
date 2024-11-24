@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Navigation from '../components/Navigation';
 import { mockFines } from '../data/mockData';
 import { Fine } from '../types';
 
@@ -103,7 +102,6 @@ export default function EditFine() {
           </button>
         </form>
       </div>
-      <Navigation />
     </div>
   );
 }

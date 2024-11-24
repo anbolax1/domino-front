@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {ArrowLeft, Plus} from 'lucide-react';
 import {useNavigate} from 'react-router-dom';
 import {v4 as uuidv4} from 'uuid';
-import Navigation from '../components/Navigation';
 import FileModal from '../components/File/FileModal';
 import axios from 'axios';
 import {format} from 'date-fns';
@@ -308,7 +307,6 @@ export default function NewFine() {
               />
           )}
         </div>
-        <Navigation />
       </div>
   );
 }

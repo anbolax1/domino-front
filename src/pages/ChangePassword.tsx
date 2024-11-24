@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Navigation from "../components/Navigation";
 
 export default function ChangePassword() {
     const navigate = useNavigate();
@@ -93,7 +92,6 @@ export default function ChangePassword() {
                     </button>
                 </form>
             </div>
-            <Navigation />
         </div>
     );
 }

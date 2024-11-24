@@ -2,7 +2,6 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit } from 'lucide-react';
 import { mockFines } from '../data/mockData';
-import Navigation from '../components/Navigation';
 
 export default function FineDetails() {
   const { id } = useParams();
@@ -102,7 +101,6 @@ export default function FineDetails() {
           </div>
         </div>
       </div>
-      <Navigation />
     </div>
   );
 }

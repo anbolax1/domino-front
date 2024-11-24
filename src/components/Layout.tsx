@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from './Header';
 import { useAuth } from '../context/AuthProvider';
+import Navigation from "./Navigation";
 
 const Layout = ({ children }) => {
     const { isAuthenticated, user } = useAuth();
@@ -11,6 +12,7 @@ const Layout = ({ children }) => {
             <main className="max-w-md mx-auto">
                 {children}
             </main>
+            <Navigation />
         </div>
     );
 };

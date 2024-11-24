@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { mockFines } from '../data/mockData';
 import AccrualCard from '../components/AccrualCard';
-import Navigation from '../components/Navigation';
 
 export default function AccrualsList() {
     const [fines, setFines] = useState([]);
@@ -9,16 +7,15 @@ export default function AccrualsList() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Функция для загрузки данных из API
         const fetchFines = async () => {
             try {
                 const response = await fetch(
                     'https://api.miniapp.ruqi.pro/api/v1/accruals/list/?limit=10&page=1&sort=id&order=desc&type=penalty',
                     {
-                        method: 'GET', // Метод запроса
+                        method: 'GET',
                         headers: {
-                            'Content-Type': 'application/json', // Указываем тип контента
-                            'Init-Data': 'dev', // Добавляем заголовок Init-Data
+                            'Content-Type': 'application/json',
+                            'Init-Data': 'dev', //todo переделать на отправку токена
                         },
                     }
                 );
@@ -28,7 +25,7 @@ export default function AccrualsList() {
                 }
 
                 const data = await response.json();
-                setFines(data.data || []); // Предполагается, что данные находятся в results
+                setFines(data.data || []);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -58,7 +55,6 @@ export default function AccrualsList() {
                     ))}
                 </div>
             </div>
-            <Navigation />
         </div>
     );
 }

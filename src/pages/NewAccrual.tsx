@@ -1,36 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Upload, Plus, ChevronDown } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import React, {useEffect, useState} from 'react';
+import {ArrowLeft, Plus} from 'lucide-react';
+import {useNavigate} from 'react-router-dom';
+import {v4 as uuidv4} from 'uuid';
 import Navigation from '../components/Navigation';
-import FileCarousel from '../components/File/FileCarousel';
 import FileModal from '../components/File/FileModal';
-import axios, {AxiosRequestConfig} from 'axios';
-import { format } from 'date-fns';
-import { Object, PaginatedResponse } from '../types';
-
-interface FileWithComment {
-  file: File;
-  comment: string;
-  tempId: string;
-}
-
-interface FormData {
-  fullName: string;
-  amount: string;
-  reason: string;
-  location: string;
-  date: string;
-  objectId: string;
-}
-
-const PREDEFINED_REASONS = [
-  'Late arrival',
-  'Missing documentation',
-  'Safety violation',
-  'Quality issues',
-  'Other'
-];
+import axios from 'axios';
+import {format} from 'date-fns';
+import {Executor, ExecutorFormData, Object, PaginatedResponse} from "../types/index";
+import {DateInput} from "../components/Inputs/DateInput";
+import {SelectInput} from "../components/Inputs/SelectInput";
+import ExecutorForm from "../components/ExecutorForm";
 
 export default function NewFine() {
   const navigate = useNavigate();
@@ -38,29 +17,36 @@ export default function NewFine() {
   const [error, setError] = useState<string | null>(null);
   const [objects, setObjects] = useState<Object[]>([]);
   const [isLoadingObjects, setIsLoadingObjects] = useState(false);
-  const [customReason, setCustomReason] = useState('');
-  const [showCustomReasonInput, setShowCustomReasonInput] = useState(false);
+  const [customReasons, setCustomReasons] = useState<Record<string, string>>({});
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState<FormData>({
-    fullName: '',
-    amount: '',
-    reason: '',
-    location: '',
+  const [formData, setFormData] = useState<ExecutorFormData>({
+    fullName: "",
+    comment: "",
+    reason: "",
+    sum: "",
     date: format(new Date(), 'yyyy-MM-dd'),
     objectId: '',
+    executors: [createNewExecutor()]
   });
 
-  const [files, setFiles] = useState<FileWithComment[]>([]);
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  function createNewExecutor(): Executor {
+    return {
+      id: uuidv4(),
+      fullName: '',
+      sum: '',
+      reason: '',
+      comment: "",
+      files: []
+    };
+  }
 
   useEffect(() => {
     const fetchObjects = async () => {
       setIsLoadingObjects(true);
       try {
-        const config: any = {
-          headers: {
-            'Init-Data': 'dev', // Заголовок добавлен корректно
-          },
+        const config = {
+          headers: { 'Init-Data': 'dev' }
         };
         const response = await axios.get<PaginatedResponse<Object>>(
             'https://api.miniapp.ruqi.pro/api/v1/objects/list',
@@ -77,36 +63,90 @@ export default function NewFine() {
     fetchObjects();
   }, []);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExecutorChange = (executorId: string, field: keyof Executor, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      executors: prev.executors.map(executor =>
+          executor.id === executorId ? { ...executor, [field]: value } : executor
+      )
+    }));
+  };
+
+  const handleFileChange = (executorId: string, event: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(event.target.files || []).map(file => ({
       file,
       comment: '',
       tempId: uuidv4(),
+      executorId
     }));
-    setFiles([...files, ...newFiles]);
+
+    setFormData(prev => ({
+      ...prev,
+      executors: prev.executors.map(executor =>
+          executor.id === executorId
+              ? { ...executor, files: [...executor.files, ...newFiles] }
+              : executor
+      )
+    }));
   };
 
-  const handleFileDelete = (tempId: string) => {
-    setFiles(files.filter(f => f.tempId !== tempId));
+  const handleFileDelete = (executorId: string, tempId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      executors: prev.executors.map(executor =>
+          executor.id === executorId
+              ? { ...executor, files: executor.files.filter(f => f.tempId !== tempId) }
+              : executor
+      )
+    }));
+
     if (selectedFile === tempId) {
       setSelectedFile(null);
     }
   };
 
-  const handleCommentChange = (tempId: string, comment: string) => {
-    setFiles(files.map(f =>
-        f.tempId === tempId ? { ...f, comment } : f
-    ));
+  const handleCommentChange = (executorId: string, tempId: string, comment: string) => {
+    setFormData(prev => ({
+      ...prev,
+      executors: prev.executors.map(executor =>
+          executor.id === executorId
+              ? {
+                ...executor,
+                files: executor.files.map(f =>
+                    f.tempId === tempId ? { ...f, comment } : f
+                )
+              }
+              : executor
+      )
+    }));
   };
 
-  const handleReasonSelect = (reason: string) => {
+  const handleReasonSelect = (executorId: string, reason: string) => {
     if (reason === 'Other') {
-      setShowCustomReasonInput(true);
-      setFormData({ ...formData, reason: '' });
+      setCustomReasons(prev => ({ ...prev, [executorId]: '' }));
+      handleExecutorChange(executorId, 'reason', '');
     } else {
-      setShowCustomReasonInput(false);
-      setFormData({ ...formData, reason });
+      setCustomReasons(prev => {
+        const newReasons = { ...prev };
+        delete newReasons[executorId];
+        return newReasons;
+      });
+      handleExecutorChange(executorId, 'reason', reason);
     }
+  };
+
+  const addExecutor = () => {
+    setFormData(prev => ({
+      ...prev,
+      executors: [...prev.executors, createNewExecutor()]
+    }));
+  };
+
+  const removeExecutor = (executorId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      executors: prev.executors.filter(executor => executor.id !== executorId)
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -121,29 +161,38 @@ export default function NewFine() {
       formDataToSend.append('accrual_date', formData.date);
       formDataToSend.append('object_id', formData.objectId);
 
-      const accrualItems = [{
-        temp_id: uuidv4(),
+      const accrualItems = formData.executors.map(executor => ({
+        temp_id: executor.id,
         accrual_item_category_id: 1,
         employee: {
-          fio: formData.fullName,
+          fio: executor.fullName,
         },
         user_id: 1,
-        comment: showCustomReasonInput ? customReason : formData.reason,
-        sum_accrual: parseFloat(formData.amount),
-      }];
+        comment: customReasons[executor.id] || executor.reason,
+        sum_accrual: parseFloat(executor.sum),
+      }));
 
       formDataToSend.append('accrual_items', JSON.stringify(accrualItems));
 
       const filesData: Record<string, { path: string; comment: string }> = {};
-      files.forEach(({ file, comment, tempId }) => {
-        formDataToSend.append(`file_${tempId}`, file);
-        filesData[`file_${tempId}`] = {
-          path: file.name,
-          comment,
-        };
+      formData.executors.forEach((executor, executorIndex) => {
+        executor.files.forEach((fileData, fileIndex) => {
+          const fileKey = `file_item_accrual_item_${executor.id}_file_${fileIndex + 1}`;
+          const commentKey = `file_comment_accrual_item_${executor.id}_file_${fileIndex + 1}`;
+
+          formDataToSend.append(fileKey, fileData.file);
+          filesData[fileKey] = {
+            path: fileData.file.name,
+            comment: fileData.comment,
+          };
+
+          if (fileData.comment) {
+            formDataToSend.append(commentKey, fileData.comment);
+          }
+        });
       });
 
-      formDataToSend.append('files', JSON.stringify(filesData));
+      // formDataToSend.append('files', JSON.stringify(filesData));
 
       await axios.post('https://api.miniapp.ruqi.pro/api/v1/accruals', formDataToSend, {
         headers: {
@@ -160,8 +209,15 @@ export default function NewFine() {
   };
 
   const selectedFileData = selectedFile
-      ? files.find(f => f.tempId === selectedFile)
+      ? formData.executors
+          .flatMap(executor => executor.files)
+          .find(f => f.tempId === selectedFile)
       : null;
+
+  const objectOptions = objects.map(obj => ({
+    value: obj.id,
+    label: obj.code
+  }));
 
   return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -185,158 +241,51 @@ export default function NewFine() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Date
-              </label>
-              <input
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-              />
-            </div>
+            <DateInput
+                label="Fine Date"
+                value={formData.date}
+                onChange={(date) => setFormData(prev => ({ ...prev, date }))}
+                required
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Object
-              </label>
-              <select
-                  value={formData.objectId}
-                  onChange={(e) => setFormData({ ...formData, objectId: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                  disabled={isLoadingObjects}
-              >
-                <option value="">Select an object</option>
-                {objects.map((obj) => (
-                    <option key={obj.id} value={obj.id}>
-                      {obj.code}
-                    </option>
-                ))}
-              </select>
-            </div>
+            <SelectInput
+                label="Объект"
+                value={formData.objectId}
+                options={objectOptions}
+                onChange={(objectId) => setFormData(prev => ({ ...prev, objectId }))}
+                required
+                disabled={isLoadingObjects}
+                placeholder="Выберите объект"
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Full Name
-              </label>
-              <input
-                  type="text"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-              />
-            </div>
+            {formData.executors.map((executor, index) => (
+                <ExecutorForm
+                    key={executor.id}
+                    executor={executor}
+                    index={index}
+                    showDelete={formData.executors.length > 1}
+                    customReason={customReasons[executor.id]}
+                    onExecutorChange={handleExecutorChange}
+                    onFileChange={handleFileChange}
+                    onFileDelete={handleFileDelete}
+                    onCommentChange={handleCommentChange}
+                    onReasonSelect={handleReasonSelect}
+                    onCustomReasonChange={(executorId, reason) =>
+                        setCustomReasons(prev => ({ ...prev, [executorId]: reason }))
+                    }
+                    onDelete={removeExecutor}
+                    onFileClick={setSelectedFile}
+                />
+            ))}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Amount ($)
-              </label>
-              <input
-                  type="number"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Location
-              </label>
-              <input
-                  type="text"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Reason
-              </label>
-              <div className="relative">
-                <select
-                    value={formData.reason}
-                    onChange={(e) => handleReasonSelect(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
-                    required={!showCustomReasonInput}
-                >
-                  <option value="">Select a reason</option>
-                  {PREDEFINED_REASONS.map((reason) => (
-                      <option key={reason} value={reason}>
-                        {reason}
-                      </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none w-5 h-5" />
-              </div>
-            </div>
-
-            {showCustomReasonInput && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Custom Reason
-                  </label>
-                  <input
-                      type="text"
-                      value={customReason}
-                      onChange={(e) => setCustomReason(e.target.value)}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      required
-                      placeholder="Enter custom reason"
-                  />
-                </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Attachments
-              </label>
-
-              {files.length > 0 && (
-                  <div className="mb-4">
-                    <FileCarousel
-                        files={files}
-                        onFileDelete={handleFileDelete}
-                        onCommentChange={handleCommentChange}
-                        onFileClick={setSelectedFile}
-                    />
-                  </div>
-              )}
-
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-700 border-dashed rounded-lg">
-                <div className="space-y-1 text-center">
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                  <div className="flex text-sm text-gray-600 dark:text-gray-400">
-                    <label
-                        htmlFor="file-upload"
-                        className="relative cursor-pointer rounded-md font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
-                    >
-                      <span>Upload files</span>
-                      <input
-                          id="file-upload"
-                          name="file-upload"
-                          type="file"
-                          className="sr-only"
-                          multiple
-                          onChange={handleFileChange}
-                      />
-                    </label>
-                    <p className="pl-1">or drag and drop</p>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    PNG, JPG, GIF up to 10MB
-                  </p>
-                </div>
-              </div>
-            </div>
+            <button
+                type="button"
+                onClick={addExecutor}
+                className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Add Another Executor
+            </button>
 
             <button
                 type="submit"
@@ -354,8 +303,8 @@ export default function NewFine() {
                   file={selectedFileData.file}
                   comment={selectedFileData.comment}
                   onClose={() => setSelectedFile(null)}
-                  onCommentChange={(comment) => handleCommentChange(selectedFileData.tempId, comment)}
-                  onDelete={() => handleFileDelete(selectedFileData.tempId)}
+                  onCommentChange={(comment) => handleCommentChange(selectedFileData.executorId, selectedFileData.tempId, comment)}
+                  onDelete={() => handleFileDelete(selectedFileData.executorId, selectedFileData.tempId)}
               />
           )}
         </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import {ThemeProvider} from './context/ThemeContext';
-import FinesList from './pages/FinesList';
+import AccrualsList from './pages/AccrualsList';
 import FineDetails from './pages/FineDetails';
 import NewAccrual from './pages/NewAccrual';
 import EditFine from './pages/EditFine';
@@ -21,7 +21,7 @@ function App() {
                     <Layout>
                         <ThemeProvider>
                             <Routes>
-                                <Route path="/" element={<ProtectedRoute><FinesList/></ProtectedRoute>}/>
+                                <Route path="/" element={<ProtectedRoute><AccrualsList/></ProtectedRoute>}/>
                                 <Route path="/fine/:id" element={<ProtectedRoute><FineDetails/></ProtectedRoute>}/>
                                 <Route path="/fine/edit/:id" element={<ProtectedRoute><EditFine/></ProtectedRoute>}/>
                                 <Route path="/new" element={<ProtectedRoute><NewAccrual/></ProtectedRoute>}/>

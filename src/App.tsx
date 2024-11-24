@@ -3,7 +3,7 @@ import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom
 import {ThemeProvider} from './context/ThemeContext';
 import FinesList from './pages/FinesList';
 import FineDetails from './pages/FineDetails';
-import NewFine from './pages/NewFine';
+import NewAccrual from './pages/NewAccrual';
 import EditFine from './pages/EditFine';
 import Settings from './pages/Settings';
 import Notifications from './pages/Notifications';
@@ -24,7 +24,7 @@ function App() {
                                 <Route path="/" element={<ProtectedRoute><FinesList/></ProtectedRoute>}/>
                                 <Route path="/fine/:id" element={<ProtectedRoute><FineDetails/></ProtectedRoute>}/>
                                 <Route path="/fine/edit/:id" element={<ProtectedRoute><EditFine/></ProtectedRoute>}/>
-                                <Route path="/new" element={<ProtectedRoute><NewFine/></ProtectedRoute>}/>
+                                <Route path="/new" element={<ProtectedRoute><NewAccrual/></ProtectedRoute>}/>
                                 <Route path="/settings" element={<ProtectedRoute><Settings/></ProtectedRoute>}/>
                                 <Route path="/notifications" element={<ProtectedRoute><Notifications/></ProtectedRoute>}/>
                                 <Route path="/change-password" element={<ProtectedRoute><ChangePassword/></ProtectedRoute>}/>

@@ -18,3 +18,22 @@ export interface Notification {
   read: boolean;
   type: 'fine' | 'system' | 'payment';
 }
+
+export interface Object {
+  id: number;
+  ext_uuid: string;
+  code: string;
+}
+
+export interface PaginatedResponse<T> {
+  success: boolean;
+  meta: {
+    per_page: number;
+    current_page: number;
+    from: number;
+    to: number;
+    last_page: number;
+    total: number;
+  };
+  data: T[];
+}

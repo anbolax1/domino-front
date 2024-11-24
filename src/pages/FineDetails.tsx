@@ -38,7 +38,7 @@ export default function FineDetails() {
           <div className="flex justify-between items-start mb-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                ${fine.amount.toFixed(2)}
+                ${fine.sum.toFixed(2)}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">{fine.date}</p>
             </div>

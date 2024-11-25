@@ -62,3 +62,58 @@ export interface ExecutorFormData {
   objectId: string;
   executors: Executor[];
 }
+
+export interface Accrual {
+  id: number;
+  type: string;
+  object_id: number;
+  status: string;
+  sum_accrual: string;
+  created_at: string;
+  updated_at: string;
+  accrual_date: string;
+  accrual_items: AccrualItem[];
+  object: Object;
+}
+
+export interface AccrualItem {
+  id: number;
+  accrual_type: string;
+  accrual_item_category_id: number;
+  object_id: number;
+  user_id: number;
+  comment: string;
+  sum_accrual: string;
+  status: string;
+  accrual_id: number;
+  accrual_date: string;
+  employee: Employee;
+  files: AccrualFile[];
+  object: Object;
+  accrual_item_category: AccrualItemCategory;
+}
+
+export interface Employee {
+  id: number;
+  fio: string;
+}
+
+export interface AccrualFile {
+  id: number;
+  file_name: string;
+  type: string;
+  comment: string;
+  download_url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AccrualItemCategory {
+  id: number;
+  accrual_type: string;
+  name: string;
+  order_by: number;
+  created_at: string;
+  updated_at: string | null;
+  sum: number | null;
+}

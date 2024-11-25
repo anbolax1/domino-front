@@ -12,6 +12,7 @@ import {AuthProvider, useAuth} from "./context/AuthProvider"; // Импорти�
 import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
 import {RoleProvider} from "./context/RoleContext";
+import AccrualDetails from "./pages/AccrualDetails";
 
 function App() {
     return (
@@ -28,6 +29,7 @@ function App() {
                                 <Route path="/settings" element={<ProtectedRoute><Settings/></ProtectedRoute>}/>
                                 <Route path="/notifications" element={<ProtectedRoute><Notifications/></ProtectedRoute>}/>
                                 <Route path="/change-password" element={<ProtectedRoute><ChangePassword/></ProtectedRoute>}/>
+                                <Route path="/accrual/:id" element={<ProtectedRoute><AccrualDetails /></ProtectedRoute>}/>
                                 <Route path="/login" element={<LoginPage/>}/> {/* Страница авторизации */}
                             </Routes>
                         </ThemeProvider>

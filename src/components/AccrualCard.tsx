@@ -18,7 +18,7 @@ export default function AccrualCard({ fine }: FineCardProps) {
 
   return (
     <div
-      onClick={() => navigate(`/fine/${fine.id}`)}
+      onClick={() => navigate(`/accrual/${fine.id}`)}
       className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-3 cursor-pointer hover:shadow-md transition-shadow"
     >
       <div className="flex justify-between items-start mb-2">
